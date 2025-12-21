@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { userAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 
 const SignIn = () => {
   const [email, setEmail] = useState('')
@@ -12,6 +11,8 @@ const SignIn = () => {
 
   const { signInUser } = userAuth()
   const navigate = useNavigate()
+  const location = useLocation('')
+  const from = location.state?.from || '/dashboard'
 
   const handleSignIn = async (e) => {
     e.preventDefault()
@@ -21,7 +22,7 @@ const SignIn = () => {
     try {
       const result = await signInUser(email, password)
       if (result.success) {
-        navigate('/dashboard')
+        navigate(from, { replace: true }) 
       } else {
         setError(result.error)
       }

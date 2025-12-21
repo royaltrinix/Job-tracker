@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { userAuth } from "../context/AuthContext";
 
 const SignUp = () => {
@@ -11,6 +11,9 @@ const SignUp = () => {
 
   const { signUpNewUser } = userAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from || '/dashboard'
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -20,7 +23,7 @@ const SignUp = () => {
     try {
       const result = await signUpNewUser(email, password);
       if (result.success) {
-        navigate("/dashboard");
+        navigate(from, { replace: true});
       } else {
         setError(result.error);
       }
@@ -37,7 +40,7 @@ const SignUp = () => {
         <div className="hidden md:block w-1/2">
           <img
             className="rounded-2xl h-full object-cover"
-            src="/images/work-unspla.jpg"
+            src="/images/work-unsplash.jpg"
             alt="Background"
           />
         </div>

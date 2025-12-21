@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
 import { supabase } from "../lib/supabase"
 import { userAuth } from "../context/AuthContext"
-import { X, Building, Briefcase, MapPin, DollarSign, Calendar, FileText } from "lucide-react"
+import { X, Building, Briefcase, MapPin, DollarSign, Calendar, FileText, Loader2, Sparkles } from "lucide-react"
+import { extractJobFromUrl } from "../services/jobScraper"
 
 export const ApplicationFormModal = ({ isOpen, onClose, application, onSave }) => {
   const { session } = userAuth()
@@ -20,7 +21,9 @@ export const ApplicationFormModal = ({ isOpen, onClose, application, onSave }) =
   })
 
   const [loading, setLoading] = useState(false)
+  const [fetching, setFetching] = useState(false)
   const [error, setError] = useState("")
+  const [fetchSuccess, setFetchSuccess] = useState(false)
 
   useEffect(() => {
     if (application) {
@@ -50,12 +53,55 @@ export const ApplicationFormModal = ({ isOpen, onClose, application, onSave }) =
         notes: "",
       })
     }
-  }, [application])
+    setFetchSuccess(false)
+    setError("")
+  }, [application, isOpen])
+
+  const handleFetchJobDetails = async () => {
+    if (!formData.job_url) {
+      setError("Please enter a job URL first")
+      return
+    }
+
+    setFetching(true)
+    setError("")
+    setFetchSuccess(false)
+
+    try {
+      console.log("🔍 Fetching job details from:", formData.job_url)
+      
+      const jobDetails = await extractJobFromUrl(formData.job_url)
+      
+      console.log("✅ Received job details:", jobDetails)
+
+      // Auto-fill form with extracted data
+      setFormData(prev => ({
+        ...prev,
+        company_name: jobDetails.company || prev.company_name,
+        position_title: jobDetails.position || prev.position_title,
+        location: jobDetails.location || prev.location,
+        salary_min: jobDetails.salary_min || prev.salary_min,
+        salary_max: jobDetails.salary_max || prev.salary_max,
+        application_method: jobDetails.applicationMethod || prev.application_method,
+        notes: jobDetails.description || prev.notes,
+      }))
+
+      setFetchSuccess(true)
+      setTimeout(() => setFetchSuccess(false), 3000)
+
+    } catch (err) {
+      console.error("❌ Fetch error:", err)
+      setError(err.message || "Failed to fetch job details. Please try again.")
+    } finally {
+      setFetching(false)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError("")
+    
     if (
       !formData.company_name ||
       !formData.position_title ||
@@ -63,10 +109,11 @@ export const ApplicationFormModal = ({ isOpen, onClose, application, onSave }) =
       !formData.status ||
       !formData.application_method
     ) {
-      setError("please fill in all fields correctly")
+      setError("please fill in all required fields")
       setLoading(false)
       return
     }
+    
     try {
       if (application) {
         const { data, error } = await supabase
@@ -159,11 +206,18 @@ export const ApplicationFormModal = ({ isOpen, onClose, application, onSave }) =
             </div>
           )}
 
-          {/* Job URL */}
+          {fetchSuccess && (
+            <div className="bg-green-50 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg animate-[slide-up_0.3s_ease-out] flex items-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              <p className="font-medium">Job details fetched successfully! ✨</p>
+            </div>
+          )}
+
+          {/* Job URL with AI Fetch */}
           <div>
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
               <FileText className="w-4 h-4" />
-              Job Posting URL (Optional)
+              Job Posting URL
             </label>
             <div className="flex gap-2">
               <input
@@ -172,17 +226,31 @@ export const ApplicationFormModal = ({ isOpen, onClose, application, onSave }) =
                 value={formData.job_url}
                 onChange={handleChange}
                 className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                placeholder="https://..."
+                placeholder="https://linkedin.com/jobs/view/..."
               />
               <button
                 type="button"
-                disabled
-                className="px-4 py-3 bg-gray-200 text-gray-400 rounded-lg cursor-not-allowed font-medium"
+                onClick={handleFetchJobDetails}
+                disabled={fetching || !formData.job_url}
+                className="px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl"
               >
-                Fetch 🔄
+                {fetching ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Fetching...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    AI Fetch
+                  </>
+                )}
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-1.5">Auto-fill coming in Phase 2</p>
+            <p className="text-xs text-gray-500 mt-1.5 flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              Paste a job URL and click "AI Fetch" to auto-fill details
+            </p>
           </div>
 
           {/* Company Name */}
