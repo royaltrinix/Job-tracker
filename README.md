@@ -1,34 +1,46 @@
-# Job Tracker 📋
+# Job Application Tracker
 
-A modern web application for tracking job applications throughout your job search journey. Built with React, Supabase, and Tailwind CSS.
+A full-stack web application that helps you organize and track your job applications in one place. Built with React, Node.js, and AI-powered auto-fill capabilities.
 
-![Job Tracker Dashboard](https://via.placeholder.com/800x400?text=Job+Tracker+Screenshot)
+## What It Does
 
-## ✨ Features
+This app solves a common problem: keeping track of dozens of job applications across multiple platforms. Instead of using spreadsheets or sticky notes, you get a dedicated dashboard where you can monitor every application, track interview stages, and never lose sight of where you are in your job search.
 
-- **Dashboard Analytics**: Track total applications, response rates, and weekly activity
-- **Application Management**: Add, edit, and delete job applications
-- **Status Tracking**: Monitor applications through multiple stages (Applied, Screening, Technical Interview, Final Interview, Offer)
-- **Smart Archives**: Separate views for rejected applications and accepted offers
-- **Offer Management**: Accept or decline job offers with a single click
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Secure Authentication**: User accounts with email/password login
+## Key Features
 
-## 🚀 Tech Stack
+**Job Tracking**
+- Centralized dashboard for all applications
+- Track status from Applied to Offer
+- Monitor deadlines and follow-ups
+- Filter by status (Active, Rejected, Offers)
 
-- **Frontend**: React 18, React Router
-- **Styling**: Tailwind CSS
-- **Backend**: Supabase (PostgreSQL + Authentication)
-- **Build Tool**: Vite
-- **Deployment**: Netlify
+**AI-Powered Auto-Fill**
+- Paste any job posting URL
+- AI extracts company name, position, location, and salary
+- Review and edit before saving
+- Saves time on manual data entry
 
-## 📸 Screenshots
+**Organization**
+- Add notes for each application
+- Track application method (LinkedIn, Indeed, etc.)
+- Date tracking for applications
+- Clean, intuitive interface
 
-### Dashboard
-View your job search statistics and recent applications at a glance.
+## Tech Stack
 
-### Applications Page
-Manage all your active job applications in one place.
+**Frontend**
+- React with React Router
+- Tailwind CSS for styling
+- Lucide React for icons
 
-### Application Form
-Quick and easy form to add new applications with all relevant details.
+**Backend**
+- Node.js with Express
+- Puppeteer for web scraping
+- Cohere AI for data extraction
+- Supabase for database and authentication
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- A Supabase account
+- A Cohere API key

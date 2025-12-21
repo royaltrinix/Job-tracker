@@ -12,6 +12,7 @@ export const AuthContextProvider = ({children}) => {
         const { data, error } = await supabase.auth.signUp({
             email: email,
             password: password,
+            emailRedirectTo: `${window.location.origin}/dashboard`
         });
 
         if(error){
@@ -51,8 +52,8 @@ export const AuthContextProvider = ({children}) => {
 
     //  SIGN OUT
 
-    const signOut = () => {
-        const { error } = supabase.auth.signOut();
+    const signOut = async () => { 
+        const { error } = await supabase.auth.signOut(); 
         if (error) {
             console.error("there was an error: ", error);
         }

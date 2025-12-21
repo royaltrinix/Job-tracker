@@ -8,6 +8,7 @@ import Applications from "./pages/Applications"
 import Rejected from "./pages/Rejected"
 import Offers from "./pages/Offers"
 import { Layout } from "./components/Layout"
+import LandingPage from "./pages/LandingPage" 
 
 function App() {
 
@@ -15,7 +16,7 @@ function App() {
     <AuthContextProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/signin" />} />
+          <Route path="/" element={<LandingPage />} /> 
           <Route path = "/signup" element={<SignUp/> }/>
           <Route path = "/signin" element={<SignIn/> }/>
           <Route element={<Layout />}>
@@ -24,6 +25,7 @@ function App() {
             <Route path = "/rejected" element={<PrivateRoute><Rejected/></PrivateRoute>} />
             <Route path = "/offers" element={<PrivateRoute><Offers/></PrivateRoute>} />
           </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthContextProvider>
